@@ -1,6 +1,7 @@
 using UnityEngine;
+using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimation))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
@@ -8,34 +9,57 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private float _groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask _groundLayer;
-
+    
+    private PlayerAnimation _playerAnimation;
     private Rigidbody2D _rigidbody;
-    private float _horizontalInput;
+    private float _movementInput;
     private bool _isGrounded;
 
     private void Awake()
     {
+        _playerAnimation = GetComponent<PlayerAnimation>();
         _rigidbody = GetComponent<Rigidbody2D>();
     }
-
-    private void Update()
+    
+    private void Start()
     {
-        _horizontalInput = Input.GetAxisRaw("Horizontal");
-        _isGrounded = Physics2D.OverlapCircle(_groundCheck.position, _groundCheckRadius, _groundLayer);
-
-        if (Input.GetButtonDown("Jump") && _isGrounded)
-        {
-            _rigidbody.linearVelocity = new Vector2(_rigidbody.linearVelocity.x, _jumpForce);
-        }
+        StartCoroutine(HandleInputCoroutine());
     }
 
     private void FixedUpdate()
     {
-        _rigidbody.linearVelocity = new Vector2(_horizontalInput * _moveSpeed, _rigidbody.linearVelocity.y);
+        MovePlayer();
+        _playerAnimation.UpdateAnimation(_movementInput);
+        _playerAnimation.HandleFlip(_movementInput);
     }
-    
-    public float GetHorizontalInput()
+
+    private IEnumerator HandleInputCoroutine()
     {
-        return _horizontalInput;
+        while (true)
+        {
+            _movementInput = Input.GetAxis("Horizontal");
+
+            if (Input.GetButtonDown("Jump") && IsGrounded())
+            {
+                Jump();
+            }
+
+            yield return null;
+        }
+    }
+
+    private void MovePlayer()
+    {
+        _rigidbody.linearVelocity = new Vector2(_movementInput * _moveSpeed, _rigidbody.linearVelocity.y);
+    }
+
+    private void Jump()
+    {
+        _rigidbody.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+    }
+
+    private bool IsGrounded()
+    {
+        return Physics2D.OverlapCircle(_groundCheck.position, _groundCheckRadius, _groundLayer);
     }
 }
