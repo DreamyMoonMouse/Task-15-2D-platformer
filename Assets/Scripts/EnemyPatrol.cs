@@ -20,8 +20,10 @@ public class EnemyPatrol : MonoBehaviour
         while (isMoving)
         {
             Transform targetPoint = _patrolPoints[_currentPointIndex];
+            float minDistance = 0.1f;
+            float minDistanceSqr = minDistance * minDistance;
             
-            while (Vector2.Distance(transform.position, targetPoint.position) > 0.1f)
+            while ((transform.position - targetPoint.position).sqrMagnitude > minDistanceSqr)
             {
                 transform.position = Vector2.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.deltaTime);
                 yield return null; 

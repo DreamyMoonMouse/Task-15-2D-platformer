@@ -4,12 +4,15 @@ using System;
 
 public class CoinsPool : MonoBehaviour
 {
-    public event Action OnAllCoinsCollected;
-    public event Action OnScoreUpdated;
-    public int CollectedCoins => _collectedCoins;
+    [SerializeField] private PlayerDeath _playerDeath;
     
     private int _collectedCoins = 0;
     private List<Coin> _coins = new List<Coin>();
+    
+    public event Action OnAllCoinsCollected;
+    public event Action OnScoreUpdated;
+    
+    public int CollectedCoins => _collectedCoins;
     
     private void Awake()
     {
@@ -23,14 +26,14 @@ public class CoinsPool : MonoBehaviour
             }
         }
         
-        Coin.OnCoinCollected += HandleCoinCollected;
-        PlayerDeath.OnPlayerDeath += ResetAllCoins;
+        CoinCollector.OnCoinCollected += HandleCoinCollected;
+        _playerDeath.OnPlayerDeath += ResetAllCoins;
     }
     
     private void OnDestroy()
     {
-        Coin.OnCoinCollected -= HandleCoinCollected;
-        PlayerDeath.OnPlayerDeath -= ResetAllCoins;
+        CoinCollector.OnCoinCollected -= HandleCoinCollected;
+        _playerDeath.OnPlayerDeath -= ResetAllCoins;
     }
 
     private void HandleCoinCollected(Coin collectedCoin)

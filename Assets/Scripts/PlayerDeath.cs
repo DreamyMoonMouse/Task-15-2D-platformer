@@ -11,7 +11,7 @@ public class PlayerDeath : MonoBehaviour
     private PlayerAnimation _playerAnimation;
     private bool _isDead = false;
     
-    public static event Action OnPlayerDeath;
+    public event Action OnPlayerDeath;
 
     private void Awake()
     {

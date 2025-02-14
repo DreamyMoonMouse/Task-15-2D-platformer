@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimation))]
+[RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimation), typeof(InputReader))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 5f;
@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     
     private PlayerAnimation _playerAnimation;
     private Rigidbody2D _rigidbody;
+    private InputReader _inputReader;
     private float _movementInput;
     private bool _isGrounded;
 
@@ -19,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerAnimation = GetComponent<PlayerAnimation>();
         _rigidbody = GetComponent<Rigidbody2D>();
+        _inputReader = GetComponent<InputReader>();
     }
     
     private void Start()
@@ -35,11 +37,13 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator HandleInputCoroutine()
     {
-        while (true)
+        bool isWorking = true;
+        
+        while (isWorking)
         {
-            _movementInput = Input.GetAxis("Horizontal");
+            _movementInput = _inputReader.GetHorizontalInput();
 
-            if (Input.GetButtonDown("Jump") && IsGrounded())
+            if (_inputReader.IsJumpButtonPressed() && IsGrounded())
             {
                 Jump();
             }

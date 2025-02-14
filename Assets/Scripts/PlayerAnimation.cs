@@ -1,12 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Animator), typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class PlayerAnimation : MonoBehaviour
 {
-    private const string IsMovingParameter = "IsMoving";
-    private const string IsDeadParameter = "IsDead";
-    
     [SerializeField] private float _fallSpeed = 2f;
     [SerializeField] private float _turnDuration = 0.5f;
     
@@ -25,7 +22,7 @@ public class PlayerAnimation : MonoBehaviour
 
     public void UpdateAnimation(float horizontalInput)
     {
-        _animator.SetBool(IsMovingParameter, Mathf.Abs(horizontalInput) > 0.01f);
+        _animator.SetBool(PlayerAnimatorData.Params.IsMoving, Mathf.Abs(horizontalInput) > 0.01f);
         HandleFlip(horizontalInput);
     }
     
@@ -52,7 +49,7 @@ public class PlayerAnimation : MonoBehaviour
             rigidbody.simulated = false;
         }
         
-        _animator.SetBool(IsDeadParameter, isDead);
+        _animator.SetBool(PlayerAnimatorData.Params.IsDead, isDead);
         
         if (isDead == false)
         {
@@ -118,6 +115,6 @@ public class PlayerAnimation : MonoBehaviour
         }
         
         transform.localScale = originalScale;
-        _animator.SetBool(IsDeadParameter, false);
+        _animator.SetBool(PlayerAnimatorData.Params.IsDead, false);
     }
 }
