@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimation))]
+[RequireComponent(typeof(PlayerAnimation))]
 public class PlayerDeathAnimation : MonoBehaviour
 {
     [SerializeField] private float _fallSpeed = 2f;
@@ -10,14 +10,12 @@ public class PlayerDeathAnimation : MonoBehaviour
     
     private Vector3 _originalScale;
     private Coroutine _fallCoroutine;
-    private Rigidbody2D _rigidbody;
     private PlayerAnimation _playerAnimation;
     private bool _isDead = false;
 
     private void Awake()
     {
         _originalScale = transform.localScale;
-        _rigidbody = GetComponent<Rigidbody2D>();
         _playerAnimation = GetComponent<PlayerAnimation>();
     }
 
@@ -56,24 +54,19 @@ public class PlayerDeathAnimation : MonoBehaviour
     }
     private void PlayDeathAnimation(bool isDead)
     {
-        if (_rigidbody != null)
+        if (isDead)
         {
-            _rigidbody.simulated = false;
+            _playerAnimation.SetIsDead(true);
+            _fallCoroutine = StartCoroutine(FallAnimation());
         }
-        
-        _playerAnimation.SetIsDead(isDead);
-        
-        if (isDead == false)
+        else
         {
+            _playerAnimation.SetIsDead(false);
             if (_fallCoroutine != null)
             {
                 StopCoroutine(_fallCoroutine);
                 _fallCoroutine = null;
             }
-        }
-        else
-        {
-            _fallCoroutine = StartCoroutine(FallAnimation());
         }
     }
 
@@ -92,10 +85,5 @@ public class PlayerDeathAnimation : MonoBehaviour
         
         transform.localScale = _originalScale;
         _playerAnimation.SetIsDead(false);
-        
-        if (_rigidbody != null)
-        {
-            _rigidbody.simulated = true;
-        }
     }
 }

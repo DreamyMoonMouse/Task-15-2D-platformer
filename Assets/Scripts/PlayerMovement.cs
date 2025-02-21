@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(PlayerAnimation), typeof(InputReader))]
 public class PlayerMovement : MonoBehaviour
@@ -9,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private float _groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask _groundLayer;
-    [SerializeField] private PlayerFlip _playerFlip;
+    [SerializeField] private PlayerFlipAnimation _playerFlip;
     
     private PlayerAnimation _playerAnimation;
     private Rigidbody2D _rigidbody;

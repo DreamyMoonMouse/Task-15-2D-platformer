@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerFlip : MonoBehaviour
+public class PlayerFlipAnimation : MonoBehaviour
 {
     [SerializeField] private Transform _spriteTransform;
     [SerializeField] private float _turnDuration = 0.5f;

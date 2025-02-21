@@ -2,22 +2,21 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-[RequireComponent(typeof(PlayerAnimation), typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerDeath : MonoBehaviour
 {
     [SerializeField] private Canvas _restartCanvas;
     [SerializeField] private Transform _startPosition;
-    //[SerializeField] private PlayerDeathAnimation _playerDeathAnimation;
     
-    private PlayerAnimation _playerAnimation;
     private bool _isDead = false;
+    private Rigidbody2D _rigidbody;
     
     public event Action OnPlayerDeath;
 
     private void Awake()
     {
-        _playerAnimation = GetComponent<PlayerAnimation>();
         _restartCanvas.gameObject.SetActive(false);
+        _rigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -34,6 +33,12 @@ public class PlayerDeath : MonoBehaviour
         
         float delay = 1.5f;
         _isDead = true;
+        
+        if (_rigidbody != null)
+        {
+            _rigidbody.simulated = false;
+        }
+    
         OnPlayerDeath?.Invoke();
         StartCoroutine(ShowRestartButtonAfterDelay(delay)); 
     }
@@ -51,7 +56,6 @@ public class PlayerDeath : MonoBehaviour
     private void RestartGame()
     {
         Time.timeScale = 1f;
-        var rigidbody = GetComponent<Rigidbody2D>();
         _isDead = false;
         
         if (_restartCanvas != null)
@@ -61,6 +65,11 @@ public class PlayerDeath : MonoBehaviour
         
         Respawn();
         
+        if (_rigidbody != null)
+        {
+            _rigidbody.simulated = true;
+        }
+        
         OnPlayerDeath?.Invoke();
     }
     
@@ -69,5 +78,6 @@ public class PlayerDeath : MonoBehaviour
         float size = 1f;
         transform.position = _startPosition.position;
         transform.localScale = new Vector3(size, size, size);
+        _rigidbody.linearVelocity = Vector2.zero;
     }
 }
