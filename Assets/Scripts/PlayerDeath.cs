@@ -7,6 +7,7 @@ public class PlayerDeath : MonoBehaviour
 {
     [SerializeField] private Canvas _restartCanvas;
     [SerializeField] private Transform _startPosition;
+    //[SerializeField] private PlayerDeathAnimation _playerDeathAnimation;
     
     private PlayerAnimation _playerAnimation;
     private bool _isDead = false;
@@ -33,9 +34,8 @@ public class PlayerDeath : MonoBehaviour
         
         float delay = 1.5f;
         _isDead = true;
-        _playerAnimation.PlayDeathAnimation(_isDead);
-        StartCoroutine(ShowRestartButtonAfterDelay(delay)); 
         OnPlayerDeath?.Invoke();
+        StartCoroutine(ShowRestartButtonAfterDelay(delay)); 
     }
 
     private IEnumerator ShowRestartButtonAfterDelay(float delay)
@@ -59,14 +59,9 @@ public class PlayerDeath : MonoBehaviour
             _restartCanvas.gameObject.SetActive(false);
         }
         
-        _playerAnimation.PlayDeathAnimation(false);
-        
-        if (rigidbody != null)
-        {
-            rigidbody.simulated = true;
-        }
-        
         Respawn();
+        
+        OnPlayerDeath?.Invoke();
     }
     
     private void Respawn()

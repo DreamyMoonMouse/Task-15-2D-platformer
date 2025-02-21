@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform _groundCheck;
     [SerializeField] private float _groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] private PlayerFlip _playerFlip;
     
     private PlayerAnimation _playerAnimation;
     private Rigidbody2D _rigidbody;
@@ -31,8 +32,8 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
-        _playerAnimation.UpdateAnimation(_movementInput);
-        _playerAnimation.HandleFlip(_movementInput);
+        _playerAnimation.SetIsMoving(Mathf.Abs(_movementInput) > 0.01f);
+        _playerFlip.HandleFlip(_movementInput);
     }
 
     private IEnumerator HandleInputCoroutine()
